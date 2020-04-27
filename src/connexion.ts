@@ -10,7 +10,7 @@ export default class Connexion {
     private constructor() {
         this._lastPingTimestamp = 0;
         this._latency = 0;
-        this._socket = io("ws://cryptic-atoll-71509.herokuapp.com", { transports: ["websocket"] });
+        this._socket = io("wss://cryptic-atoll-71509.herokuapp.com", { transports: ["websocket"] });
     }
 
     static getInstance(): Connexion {
