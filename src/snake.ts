@@ -1,27 +1,45 @@
 import * as P from "pixi.js";
 import ISection from "./dto/section";
+import ISnake from "./dto/snake";
+import Health from "./health";
 
 export default class Snake {
     private _app: P.Application;
     private _color: string;
     private _sections: { [guid: string]: P.Container };
+    private _health: Health;
 
     public constructor(app: P.Application, color: string) {
         this._app = app;
         this._color = color;
         this._sections = {};
+        this._health = new Health();
+        this._app.stage.addChild(this._health.getVisual());
     }
 
-    public update(sections: ISection[]): void {
+    public update(snake: ISnake): void {
+        // adjusting snake's health.
+        var head: ISection = snake.sections.filter(s => s.isHead === true)[0];
+        if (head !== undefined && head !== null) {
+            this.health(snake.health, head.x, head.y);
+        }
+
         var guids: string[] = Object.keys(this._sections);
 
         // section that were created.
-        var sectionsToHatch: ISection[] = sections.filter(s => !guids.includes(s.guid));
+        var sectionsToHatch: ISection[] = snake.sections.filter(s => !guids.includes(s.guid));
         this.hatch(sectionsToHatch);
 
         // section that were removed.
-        var sectionsToShred: string[] = guids.filter(g => !sections.map(s => s.guid).includes(g));
+        var sectionsToShred: string[] = guids.filter(g => !snake.sections.map(s => s.guid).includes(g));
         this.shred(sectionsToShred);
+    }
+
+    public kill(): void {
+        Object.keys(this._sections).forEach(s => {
+            this._app.stage.removeChild(this._sections[s]);
+        });
+        this._app.stage.removeChild(this._health.getVisual());
     }
 
     public hatch(sections: ISection[]): void {
@@ -43,10 +61,11 @@ export default class Snake {
 
     private grow(section: ISection): P.Container {
         var container: P.Container = new P.Container();
-        container.hitArea = new P.Circle(0, 0, section.radius);
+        container.x = section.x;
+        container.y = section.y;
         var circle: P.Graphics = new P.Graphics();
         circle.lineStyle(1, parseInt(this._color, 16));
-        circle.drawCircle(section.x, section.y, section.radius);
+        circle.drawCircle(0, 0, section.radius);
         circle.endFill();
         container.addChild(circle);
 
@@ -55,54 +74,7 @@ export default class Snake {
         return container;
     }
 
-    // public grow(): void {
-    //     let section: P.Container = new P.Container();
-    //     let circle: P.Graphics = new PIXI.Graphics();
-    //     circle.lineStyle(1, 0xff0000);
-    //     circle.drawCircle(this._snake[this._snake.length - 1].x, this._snake[this._snake.length - 1].y, 15);
-    //     circle.endFill();
-
-    //     // adding it to the stage
-    //     section.addChild(circle);
-    //     section.hitArea = new P.Circle(0, 0, 15);
-    //     section.x = this._snake[this._snake.length - 1].x;
-    //     section.y = this._snake[this._snake.length - 1].y;
-    //     this._app.stage.addChild(section);
-
-    //     // adding the section to the whole snake
-    //     this._snake.push(section);
-    // }
-
-    // public eat(): void {
-    //     this.grow();
-    // }
-
-    // public moveTo(p: P.Point): void {
-    //     let tail: P.Container = this._snake[this._snake.length - 1];
-
-    //     // removing tail from snake
-    //     this._snake.splice(-1);
-    //     this._app.stage.removeChild(tail);
-
-    //     // adding his new head in front of his old one
-    //     let section: P.Container = new P.Container();
-    //     let circle: P.Graphics = new PIXI.Graphics();
-    //     circle.lineStyle(1, 0xff0000);
-    //     circle.drawCircle(0, 0, 15);
-    //     circle.endFill();
-
-    //     // adding it to the stage
-    //     section.addChild(circle);
-    //     section.hitArea = new P.Circle(this._snake[0].x + p.x, this._snake[0].y + p.y, 15);
-    //     section.x = this._snake[0].x + p.x;
-    //     section.y = this._snake[0].y + p.y;
-    //     this._app.stage.addChild(section);
-
-    //     // adding the section to the whole snake
-    //     this._snake.unshift(section);
-    // }
-
-    // public getHeadHitArea(): P.Circle {
-    //     return this._snake[0].hitArea as P.Circle;
-    // }
+    private health(health: [number, number], x: number, y: number): void {
+        this._health.update(health, x - 24, y + 14);
+    }
 }
