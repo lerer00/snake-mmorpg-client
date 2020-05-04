@@ -34,7 +34,7 @@ export default class Projectile implements IPlaceholder {
         container.y = projectile.y;
         var circle: P.Graphics = new P.Graphics();
         circle.lineStyle(1, 0xff0000);
-        circle.drawCircle(0, 0, 4);
+        circle.drawCircle(0, 0, projectile.radius);
         circle.endFill();
         container.addChild(circle);
 

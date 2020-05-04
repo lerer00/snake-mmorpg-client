@@ -38,7 +38,7 @@ export default class Health {
         inner.name = "inner";
         inner.beginFill(0x00ff00, 0.3);
         inner.lineStyle(1, 0x00ff000, 0.2);
-        inner.drawRoundedRect(0,0,24,5,2);
+        inner.drawRoundedRect(1,0,47,5,2);
         inner.endFill();
 
         this._bar.addChild(outer);

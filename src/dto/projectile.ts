@@ -6,4 +6,5 @@ export default interface IProjectile extends ISpatial {
     owner: string;
     x: number;
     y: number;
+    radius: number;
 }

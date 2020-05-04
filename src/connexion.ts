@@ -11,7 +11,7 @@ export default class Connexion {
         this._lastPingTimestamp = 0;
         this._latency = 0;
         this._socket = io("wss://cryptic-atoll-71509.herokuapp.com", { transports: ["websocket"] });
-        // this._socket = io("http://127.0.0.1:8000", { transports: ["websocket"] });
+        // this._socket = io("http://127.0.0.1:8001", { transports: ["websocket"] });
     }
 
     static getInstance(): Connexion {

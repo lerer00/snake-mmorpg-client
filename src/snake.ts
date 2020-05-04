@@ -18,12 +18,6 @@ export default class Snake {
     }
 
     public update(snake: ISnake): void {
-        // adjusting snake's health.
-        var head: ISection = snake.sections.filter(s => s.isHead === true)[0];
-        if (head !== undefined && head !== null) {
-            this.health(snake.health, head.x, head.y);
-        }
-
         var guids: string[] = Object.keys(this._sections);
 
         // section that were created.
@@ -33,6 +27,12 @@ export default class Snake {
         // section that were removed.
         var sectionsToShred: string[] = guids.filter(g => !snake.sections.map(s => s.guid).includes(g));
         this.shred(sectionsToShred);
+
+        // adjusting snake's health.
+        var head: ISection = snake.sections.filter(s => s.isHead === true)[0];
+        if (head !== undefined && head !== null) {
+            this.health(snake.health, head.x, head.y);
+        }
     }
 
     public kill(): void {
